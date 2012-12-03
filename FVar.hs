@@ -11,7 +11,8 @@ import Data.Serialize.Put
 
 e = error "nyi"
 
-
+-- | A mutable variable (like an MVar) that is stored in a file on disk instead of in memory.
+-- Basically an FVar is just a relative FilePath.
 data FVar a = FVar FilePath
 
 -- | Retrieves a write lock and performs the given action. Writes the new @a@ to disk.
@@ -44,10 +45,3 @@ getFromDisk file = e
 -- How do we deal with that?
 exists :: FVar a -> IO Bool
 exists = e
-
-
--- flock style file locking could be used.
--- How can you lock several files atomically while preventing deadlocks?
-
--- Do we want some kind of type representation in the files?
---      Would be necessary to implement 'getFromDisk' the way it is documented.
