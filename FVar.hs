@@ -1,3 +1,9 @@
+-- -------------------------------------------------------------------------------
+-- WARNING: This is not a fully working implementation.
+-- The given implementations are just there because I want to try some things out.
+-- Very crucial features (like file locking) are deliberately omitted.
+-- -------------------------------------------------------------------------------
+
 {-# language ScopedTypeVariables #-}
 {-# language TypeFamilies #-}
 
