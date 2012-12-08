@@ -2,22 +2,34 @@
 {-# language TypeFamilies #-}
 
 
+module FVar where
+
 import Control.Applicative
-import Data.ByteString as SBS
+import Data.ByteString as SBS (readFile, writeFile)
 import Data.SafeCopy
 import Data.Serialize.Get
 import Data.Serialize.Put
+import System.Directory
+import System.FilePath
 
-
-e = error "nyi"
 
 -- | A mutable variable (like an MVar) that is stored in a file on disk instead of in memory.
 -- Basically an FVar is just a relative FilePath.
 data FVar a = FVar FilePath
+  deriving Show
+
+instance SafeCopy (FVar a) where
+    putCopy (FVar f) = contain $ safePut f
+    getCopy = contain $ FVar <$> safeGet
 
 -- | Retrieves a write lock and performs the given action. Writes the new @a@ to disk.
-modifyFVar :: FVar a -> (a -> IO (a, b)) -> IO b
-modifyFVar = e
+modifyFVar :: SafeCopy a => FVar a -> (a -> IO (a, b)) -> IO b
+modifyFVar fvar@(FVar file) action = do
+    x <- readFVar fvar
+    (x', output) <-  action x
+    SBS.writeFile file (runPut (safePut x'))
+    return output
+    
 
 -- | Reads a value from an FVar. If you also need write access use 'modifyFVar'.
 readFVar :: SafeCopy a => FVar a -> IO a
@@ -39,9 +51,19 @@ newFVar file value = do
 -- Also, throws an exception if the file contains a value
 -- of another type. The caller of this function has to make sure the types match.
 getFromDisk :: FilePath -> IO (FVar a)
-getFromDisk file = e
+getFromDisk file = return (FVar file)
 
 -- An FVar can always point to a file that doesn't exist anymore?
 -- How do we deal with that?
 exists :: FVar a -> IO Bool
-exists = e
+exists = error "exists"
+
+
+-- convenience
+
+newFVarInDirectory :: SafeCopy a => FilePath -> a -> IO (FVar a)
+newFVarInDirectory directory value = do
+    files <- getDirectoryContents directory
+    let newFile = head $ filter (\ f -> not (f `elem` files)) allPossibleFileNames
+        allPossibleFileNames = map show [0 ..]
+    newFVar (directory </> newFile) value
