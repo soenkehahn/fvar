@@ -19,6 +19,17 @@ import System.Directory
 import System.FilePath
 
 
+-- | Sets the root directory. All paths are relative to that root. If no 
+-- root is set when the first file system access happens, or if the root 
+-- does not exist as a directory, or if access permissions are missing,
+-- exceptions are thrown.
+setFVarRoot :: FilePath -> IO ()
+setFVarRoot = error "setFVarRoot"
+
+-- | Returns the set root. 
+getFVarRoot :: IO FilePath
+getFVarRoot = error "getFVarRoot"
+
 -- | A mutable variable (like an MVar) that is stored in a file on disk instead of in memory.
 -- Basically an FVar is just a FilePath, which is relative to the set root directory. 
 -- (See 'setFVarRoot'.) This should probably be an abstract type.
@@ -91,14 +102,3 @@ newFVarInDirectory directory value = do
 -- about this instead?
 -- >> I hope, the new comment clarifies this. Does it still seem dirty?
 -- >> {set,get}FVarRoot are still a good idea.
-
--- | Sets the root directory. All paths are relative to that root. If no 
--- root is set when the first file system access happens, or if the root 
--- does not exist as a directory, or if access permissions are missing,
--- exceptions are thrown.
-setFVarRoot :: FilePath -> IO ()
-setFVarRoot = error "setFVarRoot"
-
--- | Returns the set root. 
-getFVarRoot :: IO FilePath
-getFVarRoot = error "getFVarRoot"
