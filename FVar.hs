@@ -71,7 +71,7 @@ existsFVar = error "exists"
 
 -- convenience
 
--- | Store a new value, destroying the previous one.
+-- | Stores a new value, destroying the previous one.
 writeFVar :: SafeCopy a => FVar a -> a -> IO ()
 writeFVar fvar value = modifyFVar fvar (const $ return (value, ()))
 
@@ -92,7 +92,7 @@ newFVarInDirectory directory value = do
 -- >> I hope, the new comment clarifies this. Does it still seem dirty?
 -- >> {set,get}FVarRoot are still a good idea.
 
--- | Set the root directory. All paths are relative to that root. If no 
+-- | Sets the root directory. All paths are relative to that root. If no 
 -- root is set when the first file system access happens, or if the root 
 -- does not exist as a directory, or if access permissions are missing,
 -- exceptions are thrown.
