@@ -100,8 +100,10 @@ newFVarInDirectory directory value = do
 -- about this instead?
 
 setFVarRoot :: FilePath -> IO ()
+setFVarRoot = error "setFVarRoot"
 
 getFVarRoot :: IO FilePath
+getFVarRoot = error "getFVarRoot"
 
 -- > and then all paths are relative to that root.  if no root is set
 -- when the first file system access happens, or if the root does not
