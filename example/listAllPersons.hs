@@ -6,7 +6,7 @@ import Person
 
 
 main = do
-    personIndex <- readFVar =<< getFromDisk "persons.index"
+    personIndex <- readFVar =<< openFVar "persons.index"
     print personIndex
     forM_ (persons personIndex) $ \ personFVar ->
         print =<< readFVar personFVar
