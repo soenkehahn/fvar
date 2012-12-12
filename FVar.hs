@@ -20,12 +20,8 @@ import System.FilePath
 
 
 -- | A mutable variable (like an MVar) that is stored in a file on disk instead of in memory.
--- Basically an FVar is just a relative FilePath.
-
--- > why relative?  where does it root in?  does it have to be relative, or can the user decide whether it is relative or not?
--- > my guess: "... is just a FilePath.  Where it points to, whether it is relative or absolute etc. is up to the caller."
--- > or: "... is just a relative FilePath.  The root is ..."
-
+-- Basically an FVar is just a FilePath, which is relative to the set root directory. 
+-- (See 'setFVarRoot'.) This should probably be an abstract type.
 data FVar a = FVar FilePath
   deriving Show
 
@@ -41,16 +37,8 @@ modifyFVar fvar@(FVar file) action = do
     SBS.writeFile file (runPut (safePut x'))
     return output
     
--- | Store a new value, destroying the previous one.
-writeFVar :: SafeCopy a => FVar a -> a -> IO ()
-writeFVar fvar value = modifyFVar fvar (const $ return (value, ()))
-
-
--- | Reads a value from an FVar. If you also need write access use 'modifyFVar'.
-
--- > no locking here?  i think you'll also have to lock for read access, or you may end up
--- > reading half of the old object and half of the new.
-
+-- | Reads a value from an FVar. Retrieves a non-exclusive lock while doing so. 
+-- If you also need write access use 'modifyFVar'.
 readFVar :: SafeCopy a => FVar a -> IO a
 readFVar (FVar file) = do
     c <- SBS.readFile file
@@ -69,26 +57,29 @@ newFVar file value = do
 -- Throws an exception if the file does not exist.
 -- Also, throws an exception if the file contains a value
 -- of another type, i.e., the caller of this function has to make sure the types match.
-getFromDisk :: FilePath -> IO (FVar a)
-getFromDisk file = return (FVar file)
+openFVar :: FilePath -> IO (FVar a)
+openFVar file = return (FVar file)
 
--- > "newFVar" => "createFVar"?  "getFromDisk" => "loadFVar", or
--- > "openFVar"?  "newFVar" is just as good i guess.  I like "openFVar",
--- > because it doesn't really read the value into ram, but just makes
--- > it available for read and write access.
-
+-- > "newFVar" => "createFVar"?  "newFVar" is just as good i guess.
 
 
 -- An FVar can always point to a file that doesn't exist anymore?
 -- How do we deal with that?
-exists :: FVar a -> IO Bool
-exists = error "exists"
-
--- > "existsFVar"?  (i'm not very passionate about this either.)
+existsFVar :: FVar a -> IO Bool
+existsFVar = error "exists"
 
 
 -- convenience
 
+-- | Store a new value, destroying the previous one.
+writeFVar :: SafeCopy a => FVar a -> a -> IO ()
+writeFVar fvar value = modifyFVar fvar (const $ return (value, ()))
+
+-- | If you want to create a new FVar, but you don't care about its filename, 
+-- you can use 'newFVarInDirectory'. It creates a new filename that doesn't 
+-- clash with any file in the given directory and calls 'newFVar'.
+-- The given directory should be relative to the set root directory. 
+-- (See 'setFVarRoot'.)
 newFVarInDirectory :: SafeCopy a => FilePath -> a -> IO (FVar a)
 newFVarInDirectory directory value = do
     files <- getDirectoryContents directory
@@ -98,14 +89,16 @@ newFVarInDirectory directory value = do
 
 -- > hm...  "newFVarInDirectory" seems conceptually dirty to me.  what
 -- about this instead?
+-- >> I hope, the new comment clarifies this. Does it still seem dirty?
+-- >> {set,get}FVarRoot are still a good idea.
 
+-- | Set the root directory. All paths are relative to that root. If no 
+-- root is set when the first file system access happens, or if the root 
+-- does not exist as a directory, or if access permissions are missing,
+-- exceptions are thrown.
 setFVarRoot :: FilePath -> IO ()
 setFVarRoot = error "setFVarRoot"
 
+-- | Returns the set root. 
 getFVarRoot :: IO FilePath
 getFVarRoot = error "getFVarRoot"
-
--- > and then all paths are relative to that root.  if no root is set
--- when the first file system access happens, or if the root does not
--- exist as a directory, or if access permissions are missing,
--- exceptions are thrown.
