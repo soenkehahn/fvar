@@ -31,3 +31,4 @@ Open questions / problems
   - An FVar can always point to a file that doesn't exist. How do we deal with that?
     - We provide 'existsFVar'.
   - How can you use two distinct FVar-stores in the same program? 'setFVarRoot' makes this difficult.
+    - We should provide a more basic interface where you have to supply the root directory to all operations that need it. The interface with 'setFVarRoot' should be implemented on top of that as a convenience layer.
