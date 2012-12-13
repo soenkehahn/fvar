@@ -33,6 +33,10 @@ Solved questions / problems
 Open questions / problems
 -------------------------
 
-  - In case of multiple files, do we want blocking or optimistic behavior? (Can we offer both?)
   - It seems that we need some form of type representation in the written files. This is needed to implement 'openFVar' (at least in the way it is documented now). It is also desirable as it makes the files more self-contained. How do we do this?
-  - How do we guarantee atomicity in case of modification of multiple files?
+    - We want to use safecopy to store files and make data migration easy. With safecopy, you can upgrade a datatype to a new version while still being able to read serealized values in older versions. Mostlikely the new version of the type will have the same TypeRep than older versions. But sometimes the TypeRep will change. This means, we cannot use TypeReps for this.
+    - We could use TypeReps if we would have the additional constraint, that you're not allowed to make TypeReps vary. (I dislike this because it's a rather subtle constraint that is not apparent from the API. And it differs from safecopy.)
+    - Maybe we should have a type class that would enforce a unique id for every type (in all of its versions).
+  - In case of multiple files, 
+    - do we want blocking or optimistic behavior? (Can we offer both?)
+    - How do we guarantee atomicity in case of modification of multiple files?
