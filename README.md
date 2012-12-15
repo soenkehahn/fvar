@@ -39,4 +39,5 @@ Open questions / problems
     - Maybe we should have a type class that would enforce a unique id for every type (in all of its versions).
   - In case of multiple files, 
     - do we want blocking or optimistic behavior? (Can we offer both?)
+      - I think, we should have this: A function similar to 'modifyFVar', except for multiple files. If you use it normally, you will get blocking behavior. If you nest a call to 'modifyFVars' inside another, you get optimistic behavior, i.e. the inner call might throw a FVarDeadlockException.
     - How do we guarantee atomicity in case of modification of multiple files?
