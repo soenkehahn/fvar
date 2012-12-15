@@ -7,6 +7,7 @@ import Data.SafeCopy
 import Data.Map
 
 import FVar
+import FVar.Core
 
 
 data PersonIndex = PersonIndex {
