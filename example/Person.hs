@@ -6,8 +6,7 @@ import Control.Applicative ((<$>), (<*>))
 import Data.SafeCopy
 import Data.Map
 
-import FVar
-import FVar.Core
+import Data.FVar
 
 
 data PersonIndex = PersonIndex {

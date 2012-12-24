@@ -7,8 +7,7 @@ import System.Directory
 import System.Random
 import Control.Applicative
 
-import FVar
-import FVar.Core
+import Data.FVar
 import Person
 
 
@@ -21,7 +20,7 @@ main = do
 initializeDB :: IO (FVar PersonIndex)
 initializeDB = do
     createDirectory "persons"
-    newFVar "." "persons.index" emptyPersonIndex
+    newFVar "persons.index" emptyPersonIndex
 
 addPersonToDB :: FVar PersonIndex -> Person -> IO ()
 addPersonToDB pix person = do

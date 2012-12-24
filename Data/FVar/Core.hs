@@ -5,8 +5,11 @@
 -- | This is the core of the FVar library. Everything else should be
 -- implemented in terms of this module. This is also the module that
 -- needs to be tested extensively.
+--
+-- The id is needed to do proper deadlock detection. The given id should
+-- be unique for every thread that calls the functions.
 
-module FVar.Core (
+module Data.FVar.Core (
     -- * construction and reading
     FVar(..),
     newFVar,
@@ -38,22 +41,20 @@ instance SafeCopy (FVar a) where
 
 -- | Creates a new file containing @a@ on disk and returns the corresponding FVar.
 -- Throws an exception if the file already exists.
-newFVar :: SafeCopy a => FilePath -> FilePath -> a -> IO (FVar a)
-newFVar root file value = nyi
+newFVar :: (Show id, SafeCopy a) => id -> FilePath -> FilePath -> a -> IO (FVar a)
+newFVar id root file value = nyi
 
 -- | Reads an FVar from Disk.
 -- Throws an exception if the file does not exist.
 -- Also, throws an exception if the file contains a value
 -- of another type, i.e., the caller of this function has to make sure the types match.
-openFVar :: FilePath -> IO (FVar a)
-openFVar file = nyi
-
--- > "newFVar" => "createFVar"?  "newFVar" is just as good i guess.
+openFVar :: Show id => id -> FilePath -> FilePath -> IO (FVar a)
+openFVar id root file = nyi
 
 -- | Reads a value from an FVar. Retrieves a non-exclusive lock while doing so. 
 -- If you also need write access use 'modifyFVar'.
-readFVar :: SafeCopy a => FVar a -> IO a
-readFVar (FVar file) = nyi
+readFVar :: (Show id, SafeCopy a) => id -> FilePath -> FVar a -> IO a
+readFVar id root (FVar file) = nyi
 
 -- An FVar can always point to a file that doesn't exist anymore?
 -- How do we deal with that?
@@ -87,9 +88,10 @@ instance (Traversable t) => FVars (t (FVar a)) (t a)
 -- another concurrent thread or process releases a lock.
 -- A nested call to 'modifyFVars' may block as well, but may also throw
 -- a FVarDeadlock exception in case of a deadlock.
-modifyFVars :: FVars fvars values =>
-    FilePath -> fvars -> (values -> IO (values, result)) -> IO result
-modifyFVars = nyi
+modifyFVars :: (Show id, FVars fvars values) =>
+    id -> FilePath ->
+    fvars -> (values -> IO (values, result)) -> IO result
+modifyFVars id root = nyi
 
 
 nyi = error "NYI"

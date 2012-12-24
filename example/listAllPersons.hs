@@ -1,8 +1,7 @@
 
 import Data.Foldable
 
-import FVar
-import FVar.Core
+import Data.FVar
 import Person
 
 
