@@ -33,7 +33,7 @@ data TransactionId = TId
 
 -- | Performs the given action in a transaction on an FVar-store.
 -- The location of the FVar-store is given by the filepath.
--- Transactions are nestable.
+-- Transactions can be nested.
 withTransaction :: FilePath -> (TransactionId -> IO a) -> IO a
 withTransaction root = nyi
 

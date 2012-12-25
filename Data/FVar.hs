@@ -1,9 +1,3 @@
--- -------------------------------------------------------------------------------
--- WARNING: This is not a fully working implementation.
--- The given implementations are just there because I want to try some things out.
--- Very crucial features (like file locking) are deliberately omitted.
--- -------------------------------------------------------------------------------
-
 {-# language ScopedTypeVariables #-}
 {-# language TypeFamilies #-}
 
@@ -18,6 +12,12 @@ import Data.FVar.Core (FVar, nyi)
 import qualified Data.FVar.Core as Core
 
 
+-- | Runs the given action in a transaction on an FVar-store.
+-- The location of the FVar-store is given by the filepath.
+-- Transactions can be nested.
+-- This is a simple wrapper around 'Data.FVar.Core.withTransaction'.
+-- It uses the ThreadId to manage transactions. So one transaction is
+-- bound to one thread.
 withTransaction :: FilePath -> IO a -> IO a
 withTransaction = nyi
 
