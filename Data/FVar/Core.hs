@@ -73,8 +73,8 @@ existsFVar :: TransactionId -> FVar a -> IO Bool
 existsFVar = nyi
 
 -- | Reads a value from an FVar.
-readFVar :: TransactionId -> FilePath -> FVar a -> IO a
-readFVar id root (FVar file) = nyi
+readFVar :: TransactionId -> FVar a -> IO a
+readFVar id (FVar file) = nyi
 
 -- | Writes a value to a given file.
 writeFVar :: TransactionId -> FVar a -> a -> IO ()
