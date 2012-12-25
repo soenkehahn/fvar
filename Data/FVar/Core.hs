@@ -21,8 +21,6 @@ module Data.FVar.Core (
 
     readFVar,
     writeFVar,
-
-    nyi,
   ) where
 
 
@@ -79,8 +77,3 @@ readFVar id (FVar file) = nyi
 -- | Writes a value to a given file.
 writeFVar :: TransactionId -> FVar a -> a -> IO ()
 writeFVar = nyi
-
-
--- development
-
-nyi = error "NYI"
